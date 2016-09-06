@@ -68,16 +68,12 @@ input[type=text] {
 }
 
 body { 
-		font-family: 'Source Sans Pro', sans-serif;
-			font-size: 20pt;
-				font-weight: 300;
-					line-height: 1.75em;
-						color: #fff;
-							background: url(http://www.spyderonlines.com/images/wallpapers/dark-background-pictures/dark-background-pictures-6.jpg) no-repeat center center fixed; 
-								-webkit-background-size: cover;
-									-moz-background-size: cover;
-										-o-background-size: cover;
-											background-size: cover;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 20pt;
+	font-weight: 300;
+	line-height: 1.75em;
+	color: #fff;
+	background-color: #000;
 }
 
 form {
