@@ -14,7 +14,7 @@
 
 		if($status == 'reset') {
 			$status = 'change';	
-		}elseif($status == 'switch') {
+		}elseif($status == 'rotate') {
 			$file = fopen($room_name.'/status.txt', 'r');	
 			$status = fread($file, filesize($room_name.'/status.txt'));
 			fclose($file);

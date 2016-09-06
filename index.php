@@ -89,7 +89,7 @@
 				var xhttp = new XMLHttpRequest();
 				xhttp.open("GET", "set_status.php?room=<?php echo $room_id; ?>&status=" + statusVal, true);
 				xhttp.send();
-                
+				
 				return false;
 			}
 
