@@ -1,5 +1,5 @@
 <?php
-	if(isset($_GET['name'])) {
+	if(isset($_GET['name']) && !empty($_GET['name'])) {
 		include 'connection.php';
 
 		$name = $_GET['name'];
