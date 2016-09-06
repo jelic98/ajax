@@ -1,7 +1,7 @@
 <?php
-	include 'connection.php';
-
 	if(isset($_GET['name'])) {
+		include 'connection.php';
+
 		$name = $_GET['name'];
 
 		$cmd = "INSERT INTO `rooms` (`name`) VALUES ('".$name."');";
@@ -13,6 +13,8 @@
 		$status = 'empty';
 		fwrite($file, $status);
 		fclose($file);
+
+		mysqli_close($connect);
 	} 
 
 	header('location: index.php');	

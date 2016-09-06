@@ -2,7 +2,7 @@
 	<head>
 		<title>AJAX Player</title>
 	</head>
-	<body>
+	<body onload="update()">
 		<?php
 			include 'connection.php';
 
@@ -36,13 +36,66 @@
 				echo '<input type="submit" value="Upload">';
 				echo '</form>';
 
-				echo '<p>filename</p>';
-				echo '<p>status</p>';
+				echo '<p id="status">empty</p>';
 
-				echo '<a href="set_status.php?room='.$room_id.'">Play/Pause</a>';
+				echo '<button type="button" onclick="setStatus()">Play/Pause</button>';
 				echo '<br/>';
 				echo '<a href="index.php">Back</a>';
 			}
+
+			mysqli_close($connect);
 		?>
+		<script>
+			var audio = new Audio("<?php echo $room_name; ?>/song.mp3");
+
+			function update() {
+				change();
+				setInterval(getStatus, 1);
+				setInterval(getSong, 1);
+			}
+
+			function change() {
+				audio = new Audio("<?php echo $room_name; ?>/song.mp3");
+			}
+
+			function play() {
+				audio.play();
+			}
+
+			function pause() {
+				audio.pause();	
+			}
+		
+			function setStatus() {
+				var xhttp = new XMLHttpRequest();
+				xhttp.open("GET", "set_status.php?room=<?php echo $room_id; ?>", true);
+				xhttp.send();
+			}
+
+			function getStatus() {
+				var xhttp = new XMLHttpRequest();
+
+				xhttp.onreadystatechange = function() {
+					if(this.readyState == 4 && this.status == 200) {
+						switch(this.responseText) {
+							case "play":
+								play();
+								break;
+							case "pause":
+								pause();
+								break;
+							case "change":
+								change();
+								break;
+						}
+
+						document.getElementById("status").innerHTML = this.responseText;
+					}
+				};
+										    
+				xhttp.open("GET", "get_status.php?room=<?php echo $room_id; ?>", true);
+				xhttp.send();
+			}
+		</script>
 	</body>
 </html>

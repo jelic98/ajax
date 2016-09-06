@@ -1,5 +1,10 @@
 <?php
 	if(isset($_GET['room'])) {
+		$status_file = fopen($room_name.'/status.txt', 'w');
+		$status = 'pause';
+		fwrite($status_file, $status);
+		fclose($status_file);
+		
 		include 'connection.php';
 
 		$room_id = $_GET['room'];
@@ -16,13 +21,15 @@
 		unlink($room_name.'/song.mp3');
 		move_uploaded_file($_FILES['song']['tmp_name'], $room_name.'/song.mp3');
 		
+		mysqli_close($connect);
+
 		$status_file = fopen($room_name.'/status.txt', 'w');
-		$status = 'play';
+		$status = 'change';
 		fwrite($status_file, $status);
 		fclose($status_file);
-
+			
 		header('location: index.php?room='.$room_id);
 	}else {
-		header('location: index.php');
+		header('location: index.php');	
 	}
 ?>
