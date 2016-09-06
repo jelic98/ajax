@@ -17,7 +17,7 @@
 		
 		if($status == 'play') {
 			$status = 'pause';
-		}elseif($status == 'pause') {
+		}elseif($status == 'pause' || $status == 'change') {
 			$status = 'play';
 		}
 

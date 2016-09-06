@@ -50,8 +50,7 @@
 
 			function update() {
 				change();
-				setInterval(getStatus, 1);
-				setInterval(getSong, 1);
+				setInterval(getStatus, 50);
 			}
 
 			function change() {

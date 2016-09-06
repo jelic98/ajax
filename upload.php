@@ -16,8 +16,6 @@
 			$room_name = $row['name'];
 		}
 		
-		ini_set('upload_max_filesize', '3200000000');
-		
 		unlink($room_name.'/song.mp3');
 		move_uploaded_file($_FILES['song']['tmp_name'], $room_name.'/song.mp3');
 		
