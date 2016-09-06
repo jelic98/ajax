@@ -48,22 +48,33 @@
 				
 				echo '<a class="button" href="index.php">&#8592;</a>';
 				echo '<a id="button" class="button" onclick="setStatus()">&#9658;</a>';
-				echo '<a class="button" href="index.php?room='.$room_id.'"><b>R</b></a>';
+				echo '<a class="button" href="index.php?room='.$room_id.'"><b>R</b></a>';	
 			}
 
 			mysqli_close($connect);
 		?>
 		</div>
+		<?php
+			if(isset($_GET['room'])) {
+				echo '<div id="access" onclick="access(this)">Click to enter</div>';
+			}
+		?>
+		<audio id="player"></audio>
 		<script>
-			var audio = new Audio("<?php echo $room_name; ?>/song.mp3");
-
+			var audio = document.getElementById('player');
+			
 			function update() {
-				change();
 				setInterval(getStatus, 50);
 			}
 
+			function access(e) {
+				e.style.visibility = 'hidden';
+				play();
+				change();	
+			}
+
 			function change() {
-				audio = new Audio("<?php echo $room_name; ?>/song.mp3");
+				audio.src = '<?php echo $room_name; ?>/song.mp3';
 			}
 
 			function play() {
@@ -78,7 +89,7 @@
 				var xhttp = new XMLHttpRequest();
 				xhttp.open("GET", "set_status.php?room=<?php echo $room_id; ?>", true);
 				xhttp.send();
-
+                
 				return false;
 			}
 
