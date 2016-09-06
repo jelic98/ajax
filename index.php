@@ -47,8 +47,8 @@
 				echo '<p id="status">No track</p>';
 				
 				echo '<a class="button" href="index.php">&#8592;</a>';
-				echo '<a id="button" class="button" onclick="setStatus()">&#9658;</a>';
-				echo '<a class="button" href="index.php?room='.$room_id.'"><b>R</b></a>';	
+				echo '<a id="button" class="button" onclick="setStatus(switch)">&#9658;</a>';
+				echo '<a class="button" onclick="setStatus(reset)""><b>R</b></a>';	
 			}
 
 			mysqli_close($connect);
@@ -85,9 +85,9 @@
 				audio.pause();	
 			}
 		
-			function setStatus() {
+			function setStatus(statusVal) {
 				var xhttp = new XMLHttpRequest();
-				xhttp.open("GET", "set_status.php?room=<?php echo $room_id; ?>", true);
+				xhttp.open("GET", "set_status.php?room=<?php echo $room_id; ?>&status=" + statusVal, true);
 				xhttp.send();
                 
 				return false;
