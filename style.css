@@ -1,0 +1,83 @@
+@import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro:300");
+
+.myLabel, .button, input[type=submit] {
+	border: none;
+	color: #fff;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 20px;
+	border-radius: 8px;
+	margin: 5px 2px;
+	-webkit-transition-duration: 0.4s; 
+	transition-duration: 0.4s;
+	cursor: pointer;
+	background-color: #fff;
+	color: #000;
+}
+
+.myLabel:hover, .button:hover, input[type=submit]:hover {
+	background-color: transparent;
+	color: #fff;
+	box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+label.myLabel input[type="file"] {
+	    position: fixed;
+		    top: -1000px;
+}
+
+input[type="submit"] {
+	height:75px;	
+}
+
+.myLabel :invalid {
+	    background-color: #c0392b;
+}
+
+.myLabel :valid  {
+	    background-color: #27ae60;
+}
+
+input[type=text] {
+	width: 200px;
+	height: 35px;
+	font-size: 20px;
+	text-align: center;
+}
+
+.item {
+	text-decoration: none;	
+	color: #fff;	
+}
+
+.item:hover {
+	border: 2px solid #fff;	
+}
+
+body { 
+		font-family: 'Source Sans Pro', sans-serif;
+			font-size: 20pt;
+				font-weight: 300;
+					line-height: 1.75em;
+						color: #fff;
+							background: url(http://www.spyderonlines.com/images/wallpapers/dark-background-pictures/dark-background-pictures-6.jpg) no-repeat center center fixed; 
+								-webkit-background-size: cover;
+									-moz-background-size: cover;
+										-o-background-size: cover;
+											background-size: cover;
+}
+
+form {
+	margin: 25px;	
+}
+
+.center {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: #fff;
+	text-align: center;
+}i
