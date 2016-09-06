@@ -64,7 +64,7 @@
 			var audio = document.getElementById('player');
 			
 			function update() {
-				setInterval(getStatus, 50);
+				setInterval(getStatus, 1);
 			}
 
 			function access(e) {
