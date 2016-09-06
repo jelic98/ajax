@@ -4,7 +4,7 @@
 	
 		$room_id = $_GET['room'];
 		$status = $_GET['status'];
-
+	
 		$cmd = 'SELECT `name` FROM `rooms` WHERE `id`='.$room_id.';';
 		$result = mysqli_query($connect, $cmd);
 
@@ -29,7 +29,7 @@
 		$file = fopen($room_name.'/status.txt', 'w');
 		fwrite($file, $status);
 		fclose($file);
-
+		
 		mysqli_close($connect);
 	}
 ?>

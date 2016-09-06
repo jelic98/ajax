@@ -47,8 +47,8 @@
 				echo '<p id="status">No track</p>';
 				
 				echo '<a class="button" href="index.php">&#8592;</a>';
-				echo '<a id="button" class="button" onclick="setStatus(switch)">&#9658;</a>';
-				echo '<a class="button" onclick="setStatus(reset)""><b>R</b></a>';	
+				echo '<a id="button" class="button" onclick="setStatus(\'rotate\')">&#9658;</a>';
+				echo '<a class="button" onclick="setStatus(\'reset\')"><b>R</b></a>';	
 			}
 
 			mysqli_close($connect);
