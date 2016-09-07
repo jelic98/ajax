@@ -23,10 +23,9 @@
 					echo '<br/>';
 				}
 
-				echo '<form action="add_room.php" method="post">';
+				echo '<form action="add_room.php" method="get">';
 				echo '<input type="text" name="name" placeholder="Room name" required>';
 				echo '<br/>';
-				echo '<input type="hidden" value="'.$_SESSION['_token'].'" name="_token">';	
 				echo '<input type="submit" value="+">';
 				echo '</form>';
 			}else {
