@@ -69,7 +69,7 @@
 			var audio = document.getElementById('player');
 			
 			function update() {
-				setInterval(getStatus, 1);
+				setInterval(getStatus, 250);
 			}
 
 			function access(e) {
