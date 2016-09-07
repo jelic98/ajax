@@ -1,8 +1,10 @@
 <?php
-	if(isset($_GET['name']) && !empty($_GET['name'])) {
+	session_start();
+
+	if(isset($_POST['name']) && !empty($_POST['name']) && $_SESSION['_token'] == $_POST['_token']) {
 		include 'connection.php';
 
-		$name = $_GET['name'];
+		$name = $_POST['name'];
 
 		$cmd = "INSERT INTO `rooms` (`name`) VALUES ('".$name."');";
 		mysqli_query($connect, $cmd);

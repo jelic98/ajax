@@ -6,6 +6,10 @@
 	<body onload="update()">
 		<div class="center">
 		<?php
+			session_start();
+
+			$_SESSION['_token'] = bin2hex(openssl_random_pseudo_bytes(16));
+
 			include 'connection.php';
 
 			if(!isset($_GET['room'])) {
@@ -19,9 +23,10 @@
 					echo '<br/>';
 				}
 
-				echo '<form action="add_room.php" method="get">';
+				echo '<form action="add_room.php" method="post">';
 				echo '<input type="text" name="name" placeholder="Room name" required>';
 				echo '<br/>';
+				echo '<input type="hidden" value="'.$_SESSION['_token'].'" name="_token">';	
 				echo '<input type="submit" value="+">';
 				echo '</form>';
 			}else {
@@ -41,6 +46,7 @@
 			    echo '<input type="file" name="song" required/>';
 			    echo '<span>Upload</span>';
 				echo '</label>';
+				echo '<input type="hidden" value="'.$_SESSION['_token'].'" name="_token">';	
 				echo '<input type="submit" value="&#8593;">';
 				echo '</form>';
 

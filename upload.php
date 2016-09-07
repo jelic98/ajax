@@ -1,5 +1,7 @@
 <?php
-	if(isset($_GET['room'])) {
+	session_start();
+	
+	if(isset($_GET['room']) && $_POST['_token'] == $_SESSION['_token']) {
 		$status_file = fopen($room_name.'/status.txt', 'w');
 		$status = 'pause';
 		fwrite($status_file, $status);
