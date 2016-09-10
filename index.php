@@ -31,6 +31,10 @@
 			}else {
 				$room_id = $_GET['room'];
 				
+				if(empty($room_id)) {
+					header('location: index.php');	
+				}
+
 				$cmd = 'SELECT `name` FROM `rooms` WHERE `id`='.$room_id.';';
 				$result = mysqli_query($connect, $cmd);
 				
