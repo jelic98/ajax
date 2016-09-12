@@ -1,140 +1,209 @@
+<?php
+	session_start();
+
+	include 'connection.php';
+?>
 <html>
-	<head>
-		<title>AJAX Player</title>
-		<link rel="stylesheet" type="text/css" href="style.css">
-	</head>
-	<body onload="update()">
-		<div class="center">
-		<?php
-			session_start();
+<head>
+	<title>AJAX Player</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body onload="update()">
+	<div class="center">
+	<?php
+		$_SESSION['_token'] = bin2hex(openssl_random_pseudo_bytes(16));
 
-			$_SESSION['_token'] = bin2hex(openssl_random_pseudo_bytes(16));
+		if(!isset($_GET['room'])) {
+			$cmd = 'SELECT * FROM `rooms`;';
+			$result = mysqli_query($connect, $cmd);
 
-			include 'connection.php';
+			echo '<h1>Lobby</h1>';
 
-			if(!isset($_GET['room'])) {
-				$cmd = 'SELECT * FROM `rooms`;';
-				$result = mysqli_query($connect, $cmd);
-
-				echo '<h1>Lobby</h1>';
-
-				while($row = mysqli_fetch_array($result)) {
-					echo '<a class="item" href="index.php?room='.$row['id'].'">'.$row['name'].'</a>';
-					echo '<br/>';
-				}
-
-				echo '<form action="add_room.php" method="get">';
-				echo '<input type="text" name="name" placeholder="Room name" required>';
+			while($row = mysqli_fetch_array($result)) {
+				echo '<a class="item" href="index.php?room='.$row['id'].'">'.$row['name'].'</a>';
 				echo '<br/>';
-				echo '<input type="submit" value="+">';
-				echo '</form>';
-			}else {
-				$room_id = $_GET['room'];
-				
-				if(empty($room_id)) {
-					header('location: index.php');	
-				}
-
-				$cmd = 'SELECT `name` FROM `rooms` WHERE `id`='.$room_id.';';
-				$result = mysqli_query($connect, $cmd);
-				
-				while($row = mysqli_fetch_array($result)) {
-					$room_name = $row['name'];
-				}
-
-				echo '<h1>'.$room_name.'</h1>';
-
-				echo '<form action="upload.php?room='.$room_id.'" method="post" enctype="multipart/form-data">';
-				echo '<label class="myLabel">';
-			    echo '<input type="file" name="song" required/>';
-			    echo '<span>Upload</span>';
-				echo '</label>';
-				echo '<input type="hidden" value="'.$_SESSION['_token'].'" name="_token">';	
-				echo '<input type="submit" value="&#8593;">';
-				echo '</form>';
-
-				echo '<p id="status">No track</p>';
-				
-				echo '<a class="button" href="index.php">&#8592;</a>';
-				echo '<a id="button" class="button" onclick="setStatus(\'rotate\')">&#9658;</a>';
-				echo '<a class="button" onclick="setStatus(\'reset\')"><b>R</b></a>';	
 			}
 
-			mysqli_close($connect);
-		?>
-		</div>
-		<?php
-			if(isset($_GET['room'])) {
-				echo '<div id="access" onclick="access(this)">Click to enter</div>';
-			}
-		?>
-		<audio id="player"></audio>
-		<script>
-			var audio = document.getElementById('player');
+			echo '<form action="add_room.php" method="get">';
+			echo '<input type="text" name="name" placeholder="Room name" required>';
+			echo '<br/>';
+			echo '<input type="submit" value="+">';
+			echo '</form>';
+		}else {
+			$room_id = $_GET['room'];
 			
-			function update() {
-				setInterval(getStatus, 250);
+			if(empty($room_id)) {
+				header('location: index.php');	
 			}
 
-			function access(e) {
-				e.style.visibility = 'hidden';
-				play();
-				change();	
+			$cmd = 'SELECT `name` FROM `rooms` WHERE `id`='.$room_id.';';
+			$result = mysqli_query($connect, $cmd);
+			
+			while($row = mysqli_fetch_array($result)) {
+				$room_name = $row['name'];
 			}
 
-			function change() {
-				audio.src = '<?php echo $room_name; ?>/song.mp3';
-			}
+			echo '<h1>'.$room_name.'</h1>';
 
-			function play() {
-				audio.play();
-			}
+			echo '<label class="myLabel">';
+			echo '<input type="file" id="file" name="song" required/>';
+			echo '<span>Upload</span>';
+			echo '</label>';
+			echo '<input type="hidden" value="'.$_SESSION['_token'].'" name="_token">';	
+			echo '<input type="submit" id="submit" value="&#8593;">';
+			
+			echo '<div id="progress_container">';
+			echo '<div id="progress_bar"></div>';
+			echo '</div>';
 
-			function pause() {
-				audio.pause();	
-			}
+			echo '<p id="status">No track</p>';
+			
+			echo '<a class="button" href="index.php">&#8592;</a>';
+			echo '<a id="button" class="button" onclick="setStatus(\'rotate\')">&#9658;</a>';
+			echo '<a class="button" onclick="setStatus(\'reset\')"><b>R</b></a>';	
+		}
+
+		mysqli_close($connect);
+	?>
+	</div>
+	<?php
+		if(isset($_GET['room'])) {
+			echo '<div id="access" onclick="access(this)">Click to enter</div>';
+		}
+	?>
+	<audio id="player"></audio>
+	<script>
+		var submit = document.getElementById("submit");
+		var file = document.getElementById("file");
+		var progress = document.getElementById("progress_bar");
+	
+		function toggleProgressBarVisibility() {
+			var bar = document.getElementById("progress_container");
 		
-			function setStatus(statusVal) {
-				var xhttp = new XMLHttpRequest();
-				xhttp.open("GET", "set_status.php?room=<?php echo $room_id; ?>&status=" + statusVal, true);
-				xhttp.send();
-				
-				return false;
+			if(bar.style.display) {
+				bar.style.display = 'none';
+			}else {
+				bar.style.display = 'block';	
+			}
+		}
+
+		submit.onclick = function() {
+			toggleProgressBarVisibility();	
+			
+			if(file.files.length == 0) {
+				return;	
 			}
 
-			function getStatus() {
-				var xhttp = new XMLHttpRequest();
+			var data = addFormData();
+			var request = prepareRequest();
 
-				xhttp.onreadystatechange = function() {
-					if(this.readyState == 4 && this.status == 200) {
-						var element = document.getElementById("status");
-						var button = document.getElementById("button");			
+			setupProgressStatus(request);
+		
+			request.open("POST", "upload.php?room=<?php echo $room_id; ?>");
+			request.send(data);
+		}
 
-						switch(this.responseText) {
-							case "play":
-								play();
-								button.innerHTML = "&#10074;&#10074;";
-								element.innerHTML = "Playing";
-								break;
-							case "pause":
-								pause();
-								button.innerHTML = "&#9658;";
-								element.innerHTML = "Paused";
-								break;
-							case "change":
-								change();
-								button.innerHTML = "&#9658;";
-								element.innerHTML = "Ready";
-								break;
-							case "empty":
-								button.innerHTML = "&#9658;";
-								element.innerHTML = "No track";
-								break;
-						}
+		function setupProgressStatus(request) {
+			request.upload.onprogress = function(e) {
+				var percentage = Math.ceil(e.loaded / e.total * 100) + "%"; 
+				
+				progress.style.width = percentage;
+				progress.innerHTML = percentage;	
+			
+				if(percentage == "100%") {
+					toggleProgressBarVisibility();	
+				}
+			}	
+		}
+
+		function prepareRequest() {
+			var request = new XMLHttpRequest();
+			
+			request.onreadystatechanged = function() {
+				if(request.readyState == 4) {
+					try {
+						console.log("File uploaded");
+					}catch(e) {
+						concole.log("Error occured");	
 					}
-				};
-										    
-				xhttp.open("GET", "get_status.php?room=<?php echo $room_id; ?>", true);
+				}
+			}
+
+			return request;
+		}
+
+		function addFormData() {
+			var data = new FormData();
+			data.append("song", file.files[0]);
+		
+			return data;
+		}
+
+		var audio = document.getElementById('player');
+
+		function update() {
+			setInterval(getStatus, 250);
+		}
+
+		function access(e) {
+			e.style.visibility = 'hidden';
+			play();
+			change();	
+		}
+
+		function change() {
+			audio.src = '<?php echo $room_name; ?>/song.mp3';
+		}
+
+		function play() {
+			audio.play();
+		}
+
+		function pause() {
+			audio.pause();	
+		}
+	
+		function setStatus(statusVal) {
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("GET", "set_status.php?room=<?php echo $room_id; ?>&status=" + statusVal, true);
+			xhttp.send();
+			
+			return false;
+		}
+
+		function getStatus() {
+			var xhttp = new XMLHttpRequest();
+
+			xhttp.onreadystatechange = function() {
+				if(this.readyState == 4 && this.status == 200) {
+					var element = document.getElementById("status");
+					var button = document.getElementById("button");			
+
+					switch(this.responseText) {
+						case "play":
+							play();
+							button.innerHTML = "&#10074;&#10074;";
+							element.innerHTML = "Playing";
+							break;
+						case "pause":
+							pause();
+							button.innerHTML = "&#9658;";
+							element.innerHTML = "Paused";
+							break;
+						case "change":
+							change();
+							button.innerHTML = "&#9658;";
+							element.innerHTML = "Ready";
+							break;
+						case "empty":
+							button.innerHTML = "&#9658;";
+							element.innerHTML = "No track";
+							break;
+					}
+				}
+			};
+										
+			xhttp.open("GET", "get_status.php?room=<?php echo $room_id; ?>", true);
 				xhttp.send();
 			}
 		</script>

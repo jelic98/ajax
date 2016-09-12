@@ -17,6 +17,21 @@
 	color: #000;
 }
 
+#progress_bar {
+	background-color: #fff;
+	height: 40px;
+	width: 0px;
+	color: #000;
+}
+
+#progress_container {
+	padding-bottom: 10px;
+	display: none;
+	height: 30px;
+	width: 250px;
+	border: 1px solid #fff;
+}
+
 .myLabel:hover, .button:hover, input[type=submit]:hover {
 	background-color: transparent;
 	color: #fff;
