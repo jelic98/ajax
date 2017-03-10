@@ -17,6 +17,10 @@
 			$files = scandir('rooms/');
 
 			foreach($files as $file) {
+				if($file == '.' || $file == '..') {
+					continue;
+				}
+
 				echo '<a class="item" href="index.php?room='.$file.'">'.$file.'</a>';
 				echo '<br/>';
 			}
