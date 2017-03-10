@@ -5,6 +5,9 @@
 <head>
 	<title>AJAX Player</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
+ 	<meta http-equiv="expires" content="Sat, 31 Oct 2014 00:00:00 GMT">
+	<meta http-equiv="pragma" content="no-cache">
 </head>
 <body onload="update()">
 	<div class="center">
