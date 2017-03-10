@@ -39,31 +39,31 @@
 }
 
 #access {
-	position:absolute;
-	    top:0;
-		    left:0;
-			    width:100%;
-				    height:100%;
-					background-color: #000;
-					color: #fff;
-					text-align:center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	color: #fff;
+	text-align: center;
 }
 
 label.myLabel input[type="file"] {
-	    position: fixed;
-		    top: -1000px;
+	position: fixed;
+	top: -1000px;
 }
 
 input[type="submit"] {
-	height:75px;	
+	height: 75px;	
 }
 
 .myLabel :invalid {
-	    background-color: #c0392b;
+	background-color: #c0392b;
 }
 
 .myLabel :valid  {
-	    background-color: #27ae60;
+   background-color: #27ae60;
 }
 
 input[type=text] {

@@ -1,7 +1,5 @@
 <?php
 	session_start();
-
-	include 'connection.php';
 ?>
 <html>
 <head>
@@ -14,13 +12,12 @@
 		$_SESSION['_token'] = bin2hex(openssl_random_pseudo_bytes(16));
 
 		if(!isset($_GET['room'])) {
-			$cmd = 'SELECT * FROM `rooms`;';
-			$result = mysqli_query($connect, $cmd);
-
 			echo '<h1>Lobby</h1>';
 
-			while($row = mysqli_fetch_array($result)) {
-				echo '<a class="item" href="index.php?room='.$row['id'].'">'.$row['name'].'</a>';
+			$files = scandir('rooms/');
+
+			foreach($files as $file) {
+				echo '<a class="item" href="index.php?room='.$file.'">'.$file.'</a>';
 				echo '<br/>';
 			}
 
@@ -30,26 +27,14 @@
 			echo '<input type="submit" value="+">';
 			echo '</form>';
 		}else {
-			$room_id = $_GET['room'];
+			$room_name = $_GET['room'];
 			
-			if(empty($room_id)) {
-				header('location: index.php');	
-			}
-
-			$cmd = 'SELECT `name` FROM `rooms` WHERE `id`='.$room_id.';';
-			$result = mysqli_query($connect, $cmd);
-			
-			while($row = mysqli_fetch_array($result)) {
-				$room_name = $row['name'];
-			}
-
 			echo '<h1>'.$room_name.'</h1>';
 
 			echo '<label class="myLabel">';
 			echo '<input type="file" id="file" name="song" required/>';
 			echo '<span>Upload</span>';
 			echo '</label>';
-			echo '<input type="hidden" value="'.$_SESSION['_token'].'" name="_token">';	
 			echo '<input type="submit" id="submit" value="&#8593;">';
 			
 			echo '<div id="progress_container">';
@@ -62,8 +47,6 @@
 			echo '<a id="button" class="button" onclick="setStatus(\'rotate\')">&#9658;</a>';
 			echo '<a class="button" onclick="setStatus(\'reset\')"><b>R</b></a>';	
 		}
-
-		mysqli_close($connect);
 	?>
 	</div>
 	<?php
@@ -73,10 +56,11 @@
 	?>
 	<audio id="player"></audio>
 	<script>
+		var entered = false;
 		var submit = document.getElementById("submit");
 		var file = document.getElementById("file");
 		var progress = document.getElementById("progress_bar");
-	
+
 		function toggleProgressBarVisibility() {
 			var bar = document.getElementById("progress_container");
 		
@@ -88,54 +72,44 @@
 		}
 
 		submit.onclick = function() {
-			toggleProgressBarVisibility();	
-			
 			if(file.files.length == 0) {
 				return;	
 			}
 
 			var data = addFormData();
-			var request = prepareRequest();
+			var request = new XMLHttpRequest();
 
-			setupProgressStatus(request);
-		
-			request.open("POST", "upload.php?room=<?php echo $room_id; ?>");
-			request.send(data);
-		}
-
-		function setupProgressStatus(request) {
-			request.upload.onprogress = function(e) {
-				var percentage = Math.ceil(e.loaded / e.total * 100) + "%"; 
-				
+			request.upload.addEventListener('progress', function(e) {
+		    	var percentage = Math.ceil(e.loaded / e.total * 100) + "%"; 
+								
 				progress.style.width = percentage;
 				progress.innerHTML = percentage;	
-			
-				if(percentage == "100%") {
+																			
+				if(percentage == '100%') {
 					toggleProgressBarVisibility();	
 				}
-			}	
+			}, false);
+
+			request.open('POST', 'upload.php?room=<?php echo $room_name; ?>');
+			request.send(data);	
+
+			toggleProgressBarVisibility();
 		}
 
-		function prepareRequest() {
-			var request = new XMLHttpRequest();
-			
-			request.onreadystatechanged = function() {
-				if(request.readyState == 4) {
-					try {
-						console.log("File uploaded");
-					}catch(e) {
-						concole.log("Error occured");	
-					}
-				}
+		function toggleProgressBarVisibility() {
+			var bar = document.getElementById("progress_container");
+								
+			if(bar.style.display) {
+				bar.style.display = 'none';
+			}else {
+				bar.style.display = 'block';	
 			}
-
-			return request;
 		}
 
 		function addFormData() {
 			var data = new FormData();
-			data.append("song", file.files[0]);
-		
+			data.append("file", file.files[0]);
+			data.append("_token", "<?php echo $_SESSION['_token']?>");
 			return data;
 		}
 
@@ -146,13 +120,14 @@
 		}
 
 		function access(e) {
+			entered = true;
 			e.style.visibility = 'hidden';
 			play();
 			change();	
 		}
 
 		function change() {
-			audio.src = '<?php echo $room_name; ?>/song.mp3';
+			audio.src = '<?php echo "rooms/".$room_name; ?>/song.mp3';
 		}
 
 		function play() {
@@ -165,13 +140,17 @@
 	
 		function setStatus(statusVal) {
 			var xhttp = new XMLHttpRequest();
-			xhttp.open("GET", "set_status.php?room=<?php echo $room_id; ?>&status=" + statusVal, true);
+			xhttp.open("GET", "set_status.php?room=<?php echo $room_name; ?>&status=" + statusVal, true);
 			xhttp.send();
 			
 			return false;
 		}
 
 		function getStatus() {
+			if(!entered) {
+				return;
+			}
+
 			var xhttp = new XMLHttpRequest();
 
 			xhttp.onreadystatechange = function() {
@@ -203,8 +182,8 @@
 				}
 			};
 										
-			xhttp.open("GET", "get_status.php?room=<?php echo $room_id; ?>", true);
-				xhttp.send();
+			xhttp.open("GET", "get_status.php?room=<?php echo $room_name; ?>", true);
+			xhttp.send();
 			}
 		</script>
 	</body>

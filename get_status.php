@@ -2,22 +2,13 @@
 	$status = 'empty';
 	
 	if(isset($_GET['room'])) {
-		include 'connection.php';
+		$room_name = $_GET['room'];
 
-		$room_id = $_GET['room'];
+		$filename = 'rooms/'.$room_name.'/status.txt';
 
-		$cmd = 'SELECT `name` FROM `rooms` WHERE `id`='.$room_id.';';
-		$result = mysqli_query($connect, $cmd);
-
-		while($row = mysqli_fetch_array($result)) {
-			$room_name = $row['name'];
-		}	
-	
-		$file = fopen($room_name.'/status.txt', 'r');
-		$status = fread($file, filesize($room_name.'/status.txt'));
+		$file = fopen($filename, 'r');
+		$status = fread($file, filesize($filename));
 		fclose($file);
-		
-		mysqli_close($connect);
 	}	
 
 	echo $status;	

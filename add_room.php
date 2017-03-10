@@ -1,21 +1,13 @@
 <?php
 	if(isset($_GET['name']) && !empty($_GET['name'])) {
-		include 'connection.php';
+		$room_name = $_GET['name'];
 
-		$name = htmlspecialchars(mysqli_real_escape_string($connect, $_GET['name']));
-
-		$cmd = "INSERT INTO `rooms` (`name`) VALUES ('".$name."');";
-		mysqli_query($connect, $cmd);
-	
-		mkdir($name);
-
-		$file = fopen($name.'/status.txt', 'w');
-		$status = 'empty';
-		fwrite($file, $status);
-		fclose($file);
-
-		mysqli_close($connect);
+		if(!file_exists($dir)) {
+			mkdir('rooms/'.$room_name);
+		
+			header('location: set_status.php?room='.$room_name.'&status=empty');	
+		}
 	} 
-
-	header('location: index.php');	
+	
+	header('location: index.php');
 ?>
