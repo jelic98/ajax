@@ -123,7 +123,7 @@
 		var audio = document.getElementById('player');
 
 		function update() {
-			setInterval(getStatus, 250);
+			setInterval(getStatus, 50);
 		}
 
 		function access(e) {
