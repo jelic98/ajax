@@ -20,7 +20,7 @@
 			$files = scandir('rooms/');
 
 			foreach($files as $file) {
-				if($file == '.' || $file == '..') {
+				if($file[0] == '.') {
 					continue;
 				}
 
@@ -96,7 +96,7 @@
 					toggleProgressBarVisibility();	
 				}
 			}, false);
-
+	
 			request.open('POST', 'upload.php?room=<?php echo $room_name; ?>');
 			request.send(data);	
 
@@ -123,7 +123,7 @@
 		var audio = document.getElementById('player');
 
 		function update() {
-			setInterval(getStatus, 50);
+			setInterval(getStatus, 500);
 		}
 
 		function access(e) {
@@ -147,7 +147,11 @@
 	
 		function setStatus(statusVal) {
 			var xhttp = new XMLHttpRequest();
-			xhttp.open("GET", "set_status.php?room=<?php echo $room_name; ?>&status=" + statusVal, true);
+			xhttp.open("GET", "set_status.php?room=<?php echo $room_name; ?>&status=" + statusVal, false);
+			xhttp.onreadystatechange = function() {
+				console.log("set = " + this.responseText);
+			}
+
 			xhttp.send();
 			
 			return false;
@@ -159,7 +163,7 @@
 			}
 
 			var xhttp = new XMLHttpRequest();
-
+			xhttp.open("GET", "get_status.php?room=<?php echo $room_name; ?>&time=" + new Date().getTime(), false);
 			xhttp.onreadystatechange = function() {
 				if(this.readyState == 4 && this.status == 200) {
 					var element = document.getElementById("status");
@@ -186,10 +190,11 @@
 							element.innerHTML = "No track";
 							break;
 					}
+				
+					console.log("get = " + this.responseText);
 				}
 			};
 										
-			xhttp.open("GET", "get_status.php?room=<?php echo $room_name; ?>", true);
 			xhttp.send();
 			}
 		</script>

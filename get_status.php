@@ -5,10 +5,8 @@
 		$room_name = $_GET['room'];
 
 		$filename = 'rooms/'.$room_name.'/status.txt';
-
-		$file = fopen($filename, 'r');
-		$status = fread($file, filesize($filename));
-		fclose($file);
+		
+		$status = file_get_contents($filename); 
 	}	
 
 	echo $status;	

@@ -8,9 +8,7 @@
 		if($status == 'reset') {
 			$status = 'change';	
 		}elseif($status == 'rotate') {
-			$file = fopen($filename, 'r');	
-			$status = fread($file, filesize($filename));
-			fclose($file);
+			$status = file_get_contents($filename);
 
 			if($status == 'play') {
 				$status = 'pause';
@@ -19,10 +17,8 @@
 			}
 		}
 
-		$file = fopen($filename, 'w');
-		fwrite($file, $status);
-		fclose($file);
+		file_put_contents($filename, $status);
+	
+		echo file_get_contents($filename); 
 	}
-
-	header('location: index.php');
 ?>
