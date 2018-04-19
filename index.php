@@ -148,9 +148,6 @@
 		function setStatus(statusVal) {
 			var xhttp = new XMLHttpRequest();
 			xhttp.open("GET", "set_status.php?room=<?php echo $room_name; ?>&status=" + statusVal, false);
-			xhttp.onreadystatechange = function() {
-				console.log("set = " + this.responseText);
-			}
 
 			xhttp.send();
 			
@@ -190,8 +187,6 @@
 							element.innerHTML = "No track";
 							break;
 					}
-				
-					console.log("get = " + this.responseText);
 				}
 			};
 										
