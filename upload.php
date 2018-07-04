@@ -1,8 +1,10 @@
 <?php
 	session_start();
 
+ 	require('autoload.php');
+
 	if(isset($_GET['room']) && $_POST['_token'] == $_SESSION['_token']) {
-		$room_name = $_GET['room'];
+		$room_name = strip($_GET['room']);
 		$dir = 'rooms/'.$room_name;
 		$file_extension = strtolower(strrchr($_FILES['file']['name'], '.'));
 	

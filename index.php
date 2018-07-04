@@ -51,7 +51,7 @@
 			echo '<p id="status">No track</p>';
 			
 			echo '<a class="button" href="index.php">&#8592;</a>';
-			echo '<a id="button" class="button" onclick="setStatus(\'rotate\')">&#9658;</a>';
+			echo '<a id="button" class="button">&#9658;</a>';
 			echo '<a class="button" onclick="setStatus(\'reset\')"><b>R</b></a>';	
 		}
 	?>
@@ -130,10 +130,10 @@
 			entered = true;
 			e.style.visibility = 'hidden';
 			play();
-			change();	
+			reset();	
 		}
 
-		function change() {
+		function reset() {
 			audio.src = '<?php echo "rooms/".$room_name; ?>/song.mp3';
 		}
 
@@ -146,9 +146,9 @@
 		}
 	
 		function setStatus(statusVal) {
+			console.log(statusVal);
 			var xhttp = new XMLHttpRequest();
-			xhttp.open("GET", "set_status.php?room=<?php echo $room_name; ?>&status=" + statusVal, false);
-
+			xhttp.open("GET", "set_status.php?room=<?php echo $room_name; ?>&status=" + statusVal + "&nocache=" + new Date().getTime(), true);
 			xhttp.send();
 			
 			return false;
@@ -160,7 +160,7 @@
 			}
 
 			var xhttp = new XMLHttpRequest();
-			xhttp.open("GET", "get_status.php?room=<?php echo $room_name; ?>&time=" + new Date().getTime(), false);
+			xhttp.open("GET", "get_status.php?room=<?php echo $room_name; ?>&nocache=" + new Date().getTime(), true);
 			xhttp.onreadystatechange = function() {
 				if(this.readyState == 4 && this.status == 200) {
 					var element = document.getElementById("status");
@@ -170,16 +170,19 @@
 						case "play":
 							play();
 							button.innerHTML = "&#10074;&#10074;";
+							button.setAttribute("onclick", "setStatus(\'pause\')");
 							element.innerHTML = "Playing";
 							break;
 						case "pause":
 							pause();
 							button.innerHTML = "&#9658;";
+							button.setAttribute("onclick", "setStatus(\'play\')");
 							element.innerHTML = "Paused";
 							break;
-						case "change":
-							change();
+						case "reset":
+							reset();
 							button.innerHTML = "&#9658;";
+							button.setAttribute("onclick", "setStatus(\'play\')");
 							element.innerHTML = "Ready";
 							break;
 						case "empty":
