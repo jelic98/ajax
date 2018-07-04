@@ -8,7 +8,5 @@
 		$filename = 'rooms/'.$room_name.'/status.txt';
 
 		writeToFile($filename, $status);
-	
-		echo "SET: " . $status;
 	}
 ?>	
